@@ -13,14 +13,19 @@ import {
 import {IconButton} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useSelector, useDispatch} from 'react-redux';
 import {images} from '../assets/images/images';
 import BottomTabBar from '../navigation/BottomTabBar';
+import {RootState} from '../redux/store';
+import {toggleFavorite} from '../redux/favoritesSlice';
 
 interface ProductItem {
   id: string;
   name: string;
   price: string;
   image: any;
+  rating: number;
+  reviews: number;
   isNew: boolean;
 }
 
@@ -40,62 +45,141 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const dispatch = useDispatch();
+  const favorites = useSelector((state: RootState) => state.favorites.items);
   const windowHeight = Dimensions.get('window').height;
 
-  const products: ProductItem[] = [
+  const saleProducts: ProductItem[] = [
     {
-      id: '1',
-      name: 'Aata',
+      id: 'sale_1',
+      name: 'Bhikhaneri Keshri Pheni',
       price: '30$',
       image: images.aata,
+      rating: 0,
+      reviews: 0,
       isNew: true,
     },
     {
-      id: '2',
-      name: 'Aata Premium',
+      id: 'sale_2',
+      name: 'Pure Patali Gud',
+      price: '30$',
+      image: images.aata,
+      rating: 0,
+      reviews: 0,
+      isNew: true,
+    },
+    {
+      id: 'sale_3',
+      name: 'Desi Ghee',
       price: '40$',
       image: images.aata,
-      isNew: false,
-    },
-    {
-      id: '3',
-      name: 'Aata Gold',
-      price: '50$',
-      image: images.aata,
+      rating: 0,
+      reviews: 0,
       isNew: true,
-    },
-    {
-      id: '4',
-      name: 'Aata Supreme',
-      price: '60$',
-      image: images.aata,
-      isNew: false,
     },
   ];
 
-  const renderProductCard = ({item}: {item: ProductItem}) => (
-    <View style={styles.cardWrapper}>
-      <View style={styles.productCard}>
-        <Image
-          source={item.image}
-          style={styles.productImage}
-          resizeMode="cover"
-        />
-        {item.isNew && (
-          <View style={styles.newBadge}>
-            <Text style={styles.newText}>NEW</Text>
+  const newProducts: ProductItem[] = [
+    {
+      id: 'new_1',
+      name: 'Kodo Millets',
+      price: '30$',
+      image: images.aata,
+      rating: 0,
+      reviews: 0,
+      isNew: true,
+    },
+    {
+      id: 'new_2',
+      name: 'Foxtail Millets',
+      price: '30$',
+      image: images.aata,
+      rating: 0,
+      reviews: 0,
+      isNew: true,
+    },
+    {
+      id: 'new_3',
+      name: 'Little Millet',
+      price: '40$',
+      image: images.aata,
+      rating: 0,
+      reviews: 0,
+      isNew: true,
+    },
+    {
+      id: 'new_4',
+      name: 'Barnyard Millet',
+      price: '40$',
+      image: images.aata,
+      rating: 0,
+      reviews: 0,
+      isNew: true,
+    },
+    {
+      id: 'new_5',
+      name: 'Brownstop Millet',
+      price: '40$',
+      image: images.aata,
+      rating: 0,
+      reviews: 0,
+      isNew: true,
+    },
+  ];
+
+  const renderRatingStars = (rating: number) => {
+    return (
+      <View style={styles.ratingContainer}>
+        {[1, 2, 3, 4, 5].map(star => (
+          <IconButton
+            key={star}
+            icon="star-outline"
+            size={14}
+            iconColor="#DAD9E2"
+            style={styles.starIcon}
+          />
+        ))}
+      </View>
+    );
+  };
+
+  const renderProductCard = ({item}: {item: ProductItem}) => {
+    const isFavorite = favorites.some(fav => fav.id === item.id);
+
+    return (
+      <View style={styles.cardWrapper}>
+        <View style={styles.productCard}>
+          <Image
+            source={item.image}
+            style={styles.productImage}
+            resizeMode="cover"
+          />
+          {item.isNew && (
+            <View style={styles.newBadge}>
+              <Text style={styles.newText}>NEW</Text>
+            </View>
+          )}
+          <TouchableOpacity
+            style={styles.favoriteButton}
+            onPress={() => dispatch(toggleFavorite(item))}>
+            <IconButton
+              icon="heart"
+              size={20}
+              iconColor={isFavorite ? '#DB3022' : '#9B9B9B'}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.productInfo}>
+          <View style={styles.ratingRow}>
+            {renderRatingStars(item.rating)}
+            <Text style={styles.reviewCount}>({item.reviews})</Text>
           </View>
-        )}
-        <TouchableOpacity style={styles.favoriteButton}>
-          <IconButton icon="heart-outline" size={20} iconColor="#000" />
-        </TouchableOpacity>
+          <Text style={styles.productName}>{item.name}</Text>
+          <Text style={styles.productPrice}>{item.price}</Text>
+        </View>
       </View>
-      <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>{item.price}</Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -110,7 +194,7 @@ const HomeScreen: React.FC = () => {
               style={styles.bannerImage}
               resizeMode="contain"
             />
-            <Text style={styles.bannerTitle}>Bumper Aata{'\n'}Sale</Text>
+            <Text style={styles.bannerTitle}>5 in 1 Millets</Text>
             <TouchableOpacity
               style={styles.checkButton}
               onPress={() => navigation.navigate('SignUp')}>
@@ -118,29 +202,55 @@ const HomeScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.newSection, {minHeight: windowHeight * 0.2}]}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>New</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Shop')}>
-                <Text style={styles.viewAll}>View all</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.subTitle}>You've never seen it before!</Text>
+          <View style={styles.section}>
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <View>
+                  <Text style={styles.sectionTitle}>New</Text>
+                  <Text style={styles.sectionSubtitle}>
+                    You've never seen it before!
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Shop')}>
+                  <Text style={styles.viewAll}>View all</Text>
+                </TouchableOpacity>
+              </View>
 
-            <FlatList
-              key="horizontalList"
-              data={products}
-              renderItem={renderProductCard}
-              keyExtractor={item => item.id}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.productList}
-            />
+              <FlatList
+                key="newList"
+                data={newProducts}
+                renderItem={renderProductCard}
+                keyExtractor={item => item.id}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.productList}
+              />
+              <View style={styles.sectionHeader}>
+                <View>
+                  <Text style={styles.sectionTitle}>Sale</Text>
+                  <Text style={styles.sectionSubtitle}>Super summer sale</Text>
+                </View>
+                <TouchableOpacity>
+                  <Text style={styles.viewAll}>View all</Text>
+                </TouchableOpacity>
+              </View>
+
+              <FlatList
+                key="saleList"
+                data={saleProducts}
+                renderItem={renderProductCard}
+                keyExtractor={item => item.id}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.productList}
+              />
+            </View>
           </View>
+
+          <View style={styles.bottomPadding} />
         </ScrollView>
         <BottomTabBar />
       </View>
-      {/* <TabNavigator /> */}
     </SafeAreaView>
   );
 };
@@ -187,28 +297,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  newSection: {
+  section: {
     padding: 20,
+    minHeight: 300,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
+    alignItems: 'flex-start',
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#000',
   },
-  viewAll: {
-    color: '#666',
-    fontSize: 14,
+  sectionSubtitle: {
+    color: '#9B9B9B',
+    fontSize: 11,
+    marginTop: 4,
   },
-  subTitle: {
-    color: '#666',
-    fontSize: 12,
-    marginBottom: 20,
+  viewAll: {
+    color: '#9B9B9B',
+    fontSize: 11,
   },
   productList: {
     paddingRight: 20,
@@ -246,9 +357,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 4,
     right: 4,
+    backgroundColor: '#fff',
+    borderRadius: 17,
   },
   productInfo: {
     padding: 8,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+  },
+  starIcon: {
+    margin: 0,
+    padding: 0,
+  },
+  reviewCount: {
+    fontSize: 10,
+    color: '#9B9B9B',
+    marginLeft: 4,
   },
   productName: {
     fontSize: 16,
@@ -258,6 +387,9 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 14,
     color: '#666',
+  },
+  bottomPadding: {
+    height: 20,
   },
 });
 

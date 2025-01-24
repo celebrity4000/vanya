@@ -9,6 +9,8 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
 import SignUpScreen from './src/pages/SignUpScreen';
 import LoginScreen from './src/pages/LoginScreen';
 import ForgotPasswordScreen from './src/pages/ForgotPasswordScreen';
@@ -18,7 +20,6 @@ import Product from './src/pages/Products';
 import BagScreen from './src/pages/BagScreen';
 import ProfileScreen from './src/pages/ProfileScreen';
 
-// Update RootStackParamList to include Home
 export type RootStackParamList = {
   SignUp: undefined;
   Login: undefined;
@@ -28,28 +29,31 @@ export type RootStackParamList = {
   Favorites: undefined;
   Bag: undefined;
   Profile: undefined;
-  // MainTabs: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{headerShown: false}}>
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Shop" component={Product} />
-        <Stack.Screen name="Bag" component={BagScreen} />
-        <Stack.Screen name="Favorites" component={FavoritesScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        {/* <Stack.Screen name="MainTabs" component={TabNavigator} /> */}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{headerShown: false}}>
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordScreen}
+          />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Shop" component={Product} />
+          <Stack.Screen name="Bag" component={BagScreen} />
+          <Stack.Screen name="Favorites" component={FavoritesScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 

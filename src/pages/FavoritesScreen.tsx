@@ -11,81 +11,37 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {IconButton} from 'react-native-paper';
+import {useSelector, useDispatch} from 'react-redux';
 import {images} from '../assets/images/images';
 import BottomTabBar from '../navigation/BottomTabBar';
+import {RootState} from '../redux/store';
+import {toggleFavorite} from '../redux/favoritesSlice';
 
 const {width, height} = Dimensions.get('window');
-const scaleFactor = width / 375; // Base scale factor on iPhone 8 width
+const scaleFactor = width / 375;
 
 interface ProductItem {
   id: string;
   name: string;
-  category: string;
-  color: string;
-  size: string;
   price: string;
   image: any;
   rating: number;
   reviews: number;
-  inStock: boolean;
+  category?: string;
+  color?: string;
+  size?: string;
+  inStock?: boolean;
 }
 
 const FavoritesScreen = () => {
   const [sortByPrice, setSortByPrice] = useState(false);
   const [viewType, setViewType] = useState('list');
+  const dispatch = useDispatch();
+  const favoriteItems = useSelector(
+    (state: RootState) => state.favorites.items,
+  );
 
   const categories = ['Summer', 'Pulses', 'Flours', 'Spices', 'Rice'];
-
-  const favoriteItems: ProductItem[] = [
-    {
-      id: '1',
-      name: 'Wheat Flour',
-      category: 'LIME',
-      color: 'Premium Quality',
-      size: 'L',
-      price: '32',
-      image: images.aata,
-      rating: 5,
-      reviews: 10,
-      inStock: true,
-    },
-    {
-      id: '2',
-      name: 'Longsleeve Violeta',
-      category: 'MANGO',
-      color: 'Orange',
-      size: 'S',
-      price: '46',
-      image: images.jar,
-      rating: 0,
-      reviews: 0,
-      inStock: true,
-    },
-    {
-      id: '3',
-      name: 'Rice Pack',
-      category: 'RICE',
-      color: 'Gray',
-      size: 'L',
-      price: '52',
-      image: images.aata,
-      rating: 4,
-      reviews: 3,
-      inStock: false,
-    },
-    {
-      id: '4',
-      name: 'Ghee',
-      category: 'SPICES',
-      color: 'Black',
-      size: 'S',
-      price: '55',
-      image: images.aata,
-      rating: 0,
-      reviews: 0,
-      inStock: true,
-    },
-  ];
 
   const renderStars = (rating: number) => (
     <View style={styles.ratingContainer}>
@@ -109,7 +65,9 @@ const FavoritesScreen = () => {
           style={styles.productImage}
           resizeMode="cover"
         />
-        <TouchableOpacity style={styles.closeButton}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => dispatch(toggleFavorite(item))}>
           <IconButton
             icon="close"
             size={16 * scaleFactor}
@@ -126,7 +84,7 @@ const FavoritesScreen = () => {
             <Text style={styles.metaText}>Size: {item.size}</Text>
           </View>
           <View style={styles.priceRatingContainer}>
-            <Text style={styles.price}>{item.price}$</Text>
+            <Text style={styles.price}>{item.price}</Text>
             <View style={styles.ratingRow}>
               {renderStars(item.rating)}
               <Text style={styles.reviewCount}>({item.reviews})</Text>
@@ -239,11 +197,21 @@ const styles = StyleSheet.create({
   },
   filtersScroll: {
     backgroundColor: '#fff',
-    height: 60 * scaleFactor,
+    marginBottom: 0, // Added
   },
   filtersScrollContent: {
     paddingHorizontal: 16 * scaleFactor,
-    paddingVertical: 10 * scaleFactor,
+    paddingVertical: 8 * scaleFactor,
+  },
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12 * scaleFactor,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F2F2F2',
+    marginTop: 0, // Changed to 0
   },
   filterButton: {
     backgroundColor: '#222222',
@@ -260,15 +228,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16 * scaleFactor,
   },
-  controls: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16 * scaleFactor,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F2',
-  },
+  // controls: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'center',
+  //   padding: 16 * scaleFactor,
+  //   backgroundColor: '#fff',
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: '#F2F2F2',
+  // },
   filterControl: {
     flexDirection: 'row',
     alignItems: 'center',
