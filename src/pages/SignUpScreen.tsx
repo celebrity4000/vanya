@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '100%',
     alignSelf: 'center',
-    paddingTop: '16%',
+    paddingTop: '20%',
   },
   title: {
     fontSize: 24,

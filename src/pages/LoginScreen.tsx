@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -124,7 +125,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   backContainer: {
-    paddingTop: '2%',
+    paddingTop: StatusBar.currentHeight || 0,
+
     paddingHorizontal: '2%',
   },
   formContainer: {
@@ -200,7 +202,7 @@ const styles = StyleSheet.create({
   socialContainer: {
     alignItems: 'center',
     backgroundColor: '#fff',
-    marginTop: "auto",
+    marginTop: 'auto',
   },
   socialText: {
     color: '#000',

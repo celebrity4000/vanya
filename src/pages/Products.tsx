@@ -16,6 +16,8 @@ import {images} from '../assets/images/images';
 import BottomTabBar from '../navigation/BottomTabBar';
 import {RootState} from '../redux/store';
 import {toggleFavorite} from '../redux/favoritesSlice';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface ProductItem {
   id: string;
@@ -25,9 +27,25 @@ interface ProductItem {
   rating: number;
   reviews: number;
   isNew: boolean;
+  description?: string;
 }
 
+export type RootStackParamList = {
+  SignUp: undefined;
+  Login: undefined;
+  ForgotPassword: undefined;
+  Home: undefined;
+  Shop: undefined;
+  Favorites: undefined;
+  Bag: undefined;
+  Profile: undefined;
+  ProductDetail: {productId: string};
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 const Product: React.FC = () => {
+  const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
   const favorites = useSelector((state: RootState) => state.favorites.items);
   const windowHeight = Dimensions.get('window').height;
@@ -41,6 +59,8 @@ const Product: React.FC = () => {
       rating: 4,
       reviews: 15,
       isNew: true,
+      description:
+        'Premium quality Khapali wheat flour, stone ground and rich in nutrients. Perfect for making rotis, chapatis, and other traditional dishes.',
     },
     {
       id: 'aata_2',
@@ -364,7 +384,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_3',
       name: 'Kala Namak',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -373,7 +393,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_4',
       name: 'Row Honey',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -382,7 +402,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_5',
       name: 'Jaggery Powder',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -391,7 +411,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_6',
       name: 'Khandsari Sugar',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -400,7 +420,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_7',
       name: 'Bura',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -409,7 +429,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_8',
       name: 'Sendha Namak',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -418,7 +438,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_9',
       name: 'Aalu Chips',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -427,7 +447,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_10',
       name: 'Aalu Papad',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -436,7 +456,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_11',
       name: 'Sabudana Chips',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -445,7 +465,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_12',
       name: 'Chaana Sattu',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -454,7 +474,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_13',
       name: 'Jau Sattu',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -463,7 +483,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_14',
       name: 'Wheat Daliya',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -472,7 +492,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_15',
       name: 'Jau Daliya',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -481,7 +501,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_16',
       name: 'Bajari Daliya',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -490,7 +510,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_17',
       name: 'Bikaneri Papad',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -499,7 +519,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_18',
       name: 'Bikaneri Methi Papad',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -508,7 +528,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_19',
       name: 'Bikaneri Bhujiya',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -517,7 +537,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_20',
       name: 'Mangodi',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -526,7 +546,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_21',
       name: 'Aachar',
-      price: '40₹',
+      price: '40',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -554,37 +574,43 @@ const Product: React.FC = () => {
     const isFavorite = favorites.some(fav => fav.id === item.id);
 
     return (
-      <View style={styles.cardWrapper}>
-        <View style={styles.productCard}>
-          <Image
-            source={item.image}
-            style={styles.productImage}
-            resizeMode="cover"
-          />
-          {item.isNew && (
-            <View style={styles.newBadge}>
-              <Text style={styles.newText}>NEW</Text>
-            </View>
-          )}
-          <TouchableOpacity
-            style={styles.favoriteButton}
-            onPress={() => dispatch(toggleFavorite(item))}>
-            <IconButton
-              icon={isFavorite ? 'heart' : 'heart-outline'}
-              size={20}
-              iconColor={isFavorite ? '#DB3022' : '#9B9B9B'}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ProductDetail', {productId: item.id})
+        }>
+        <View style={styles.cardWrapper}>
+          <View style={styles.productCard}>
+            <Image
+              source={item.image}
+              style={styles.productImage}
+              resizeMode="cover"
             />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.productInfo}>
-          <View style={styles.ratingRow}>
-            {renderRatingStars(item.rating)}
-            <Text style={styles.reviewCount}>({item.reviews})</Text>
+            {item.isNew && (
+              <View style={styles.newBadge}>
+                <Text style={styles.newText}>NEW</Text>
+              </View>
+            )}
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={() => dispatch(toggleFavorite(item))}>
+              <IconButton
+                icon={isFavorite ? 'heart' : 'heart-outline'}
+                size={20}
+                iconColor={isFavorite ? '#DB3022' : '#9B9B9B'}
+              />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.productPrice}>{item.price}</Text>
+
+          <View style={styles.productInfo}>
+            <View style={styles.ratingRow}>
+              {renderRatingStars(item.rating)}
+              <Text style={styles.reviewCount}>({item.reviews})</Text>
+            </View>
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.productPrice}>₹{item.price}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

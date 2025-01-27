@@ -19,6 +19,10 @@ import FavoritesScreen from './src/pages/FavoritesScreen';
 import Product from './src/pages/Products';
 import BagScreen from './src/pages/BagScreen';
 import ProfileScreen from './src/pages/ProfileScreen';
+import ProductDetail from './src/pages/ProductDetail';
+import OrdersScreen from './src/pages/OrdersScreen';
+import SettingsScreen from './src/pages/SettingsScreen';
+import CheckoutScreen from './src/pages/CheckoutScreen';
 
 export type RootStackParamList = {
   SignUp: undefined;
@@ -29,6 +33,10 @@ export type RootStackParamList = {
   Favorites: undefined;
   Bag: undefined;
   Profile: undefined;
+  ProductDetail: {productId: string};
+  Orders: undefined;
+  Settings: undefined;
+  Checkout: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -51,6 +59,10 @@ function App(): JSX.Element {
           <Stack.Screen name="Bag" component={BagScreen} />
           <Stack.Screen name="Favorites" component={FavoritesScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="ProductDetail" component={ProductDetail} />
+          <Stack.Screen name="Orders" component={OrdersScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
