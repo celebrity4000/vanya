@@ -1,4 +1,4 @@
-// SignUpScreen.tsx
+// screens/SignUpScreen.tsx
 import React, {useState} from 'react';
 import {
   View,
@@ -6,37 +6,157 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image,
+  ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {IconButton} from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
+import CustomAlert, {AlertConfig} from '../components/CustomAlert';
 import SocialMediaButtons from '../components/SocialMediaButtons';
 
-// Define the navigation param list type
 export type RootStackParamList = {
   SignUp: undefined;
   Login: undefined;
   ForgotPassword: undefined;
+  Home: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+interface FormErrors {
+  name: string;
+  email: string;
+  password: string;
+}
+
 const SignUpScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<FormErrors>({
+    name: '',
+    email: '',
+    password: '',
+  });
 
-  const handleSignUp = () => {
-    // Handle sign up logic here
-    console.log({name, email, password});
+  const [alertConfig, setAlertConfig] = useState<AlertConfig>({
+    visible: false,
+    title: '',
+    message: '',
+    buttons: [],
+    loading: false,
+  });
+
+  const validateForm = (): boolean => {
+    let isValid = true;
+    const newErrors: FormErrors = {
+      name: '',
+      email: '',
+      password: '',
+    };
+
+    if (!name.trim()) {
+      newErrors.name = 'Name is required';
+      isValid = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = 'Invalid email format';
+      isValid = false;
+    }
+
+    if (!password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+      isValid = false;
+    }
+
+    setFormErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSignUp = async () => {
+    if (!validateForm()) return;
+
+    try {
+      setLoading(true);
+
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+
+      await userCredential.user.updateProfile({
+        displayName: name,
+      });
+
+      await userCredential.user.sendEmailVerification();
+
+      setAlertConfig({
+        visible: true,
+        title: 'Success',
+        message: 'Please check your email for verification link',
+        buttons: [
+          {
+            text: 'OK',
+            type: 'action',
+            onPress: () => {
+              setAlertConfig(prev => ({...prev, visible: false}));
+              navigation.navigate('Login');
+            },
+          },
+        ],
+      });
+    } catch (error: any) {
+      console.log('Firebase error:', error);
+      let errorMessage = 'An error occurred during sign up';
+
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'This email is already registered';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password should be at least 6 characters';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: errorMessage,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSocialSignUp = (provider: 'google' | 'facebook') => {
-    // Handle social sign up logic here
+    // Implement social sign up logic here
     console.log('Social sign up with:', provider);
   };
 
@@ -44,68 +164,97 @@ const SignUpScreen: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Sign up</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Sign up</Text>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter Your Name"
-            placeholderTextColor="#666"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter Your Email Address"
-            placeholderTextColor="#666"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholder="••••••••"
-            placeholderTextColor="#666"
-          />
-        </View>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Login')}
-          style={styles.loginLink}>
-          <View style={styles.loginLinkContainer}>
-            <Text style={styles.loginText}>Already have an account?</Text>
-            <IconButton
-              icon="arrow-right"
-              size={16}
-              iconColor="#666"
-              style={styles.arrowIcon}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              style={[styles.input, formErrors.name && styles.inputError]}
+              value={name}
+              onChangeText={setName}
+              placeholder="Enter Your Name"
+              placeholderTextColor="#666"
+              returnKeyType="next"
             />
+            {formErrors.name ? (
+              <Text style={styles.errorText}>{formErrors.name}</Text>
+            ) : null}
           </View>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-          <Text style={styles.signUpButtonText}>SIGN UP</Text>
-        </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, formErrors.email && styles.inputError]}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Enter Your Email Address"
+              placeholderTextColor="#666"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+            />
+            {formErrors.email ? (
+              <Text style={styles.errorText}>{formErrors.email}</Text>
+            ) : null}
+          </View>
 
-        <SocialMediaButtons
-          onSocialPress={handleSocialSignUp}
-          containerText="Or sign up with social account"
-        />
-      </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={[styles.input, formErrors.password && styles.inputError]}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholder="••••••••"
+              placeholderTextColor="#666"
+              returnKeyType="done"
+            />
+            {formErrors.password ? (
+              <Text style={styles.errorText}>{formErrors.password}</Text>
+            ) : null}
+          </View>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={styles.loginLink}>
+            <View style={styles.loginLinkContainer}>
+              <Text style={styles.loginText}>Already have an account?</Text>
+              <IconButton
+                icon="arrow-right"
+                size={16}
+                iconColor="#666"
+                style={styles.arrowIcon}
+              />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.signUpButton,
+              loading && styles.signUpButtonDisabled,
+            ]}
+            onPress={handleSignUp}
+            disabled={loading}>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.signUpButtonText}>SIGN UP</Text>
+            )}
+          </TouchableOpacity>
+
+          <SocialMediaButtons
+            onSocialPress={handleSocialSignUp}
+            containerText="Or sign up with social account"
+          />
+        </View>
+      </ScrollView>
+
+      <CustomAlert {...alertConfig} />
     </KeyboardAvoidingView>
   );
 };
@@ -115,11 +264,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   formContainer: {
     width: '90%',
-    height: '100%',
     alignSelf: 'center',
     paddingTop: '20%',
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -144,6 +296,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: '4%',
     backgroundColor: '#F8F8F8',
+    color: '#000',
+  },
+  inputError: {
+    borderColor: '#FF0000',
+  },
+  errorText: {
+    color: '#FF0000',
+    fontSize: 12,
+    marginTop: 5,
   },
   loginLink: {
     alignSelf: 'flex-end',
@@ -159,7 +320,6 @@ const styles = StyleSheet.create({
   arrowIcon: {
     margin: 0,
     padding: 0,
-    color: '#000',
   },
   signUpButton: {
     width: '100%',
@@ -170,45 +330,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: '8%',
   },
+  signUpButtonDisabled: {
+    opacity: 0.7,
+  },
   signUpButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  socialContainer: {
-    alignItems: 'center',
-    marginTop: '5%',
-  },
-  socialText: {
-    color: '#666',
-    marginBottom: '4%',
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  socialButton: {
-    width: '15%',
-    aspectRatio: 1,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: '4%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  socialIcon: {
-    width: '50%',
-    height: '50%',
-    resizeMode: 'contain',
   },
 });
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "833255343418",
+    "project_id": "vanya-1f184",
+    "storage_bucket": "vanya-1f184.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833255343418:android:7c360b8b9adf97cae33c03",
+        "android_client_info": {
+          "package_name": "com.vanya"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtVVMPrMnpIGg5-7A9iz9i7AEpYQKEbhE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

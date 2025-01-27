@@ -1,3 +1,4 @@
+// screens/LoginScreen.tsx
 import React, {useState} from 'react';
 import {
   View,
@@ -8,15 +9,19 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {IconButton} from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
+import CustomAlert, {AlertConfig} from '../components/CustomAlert';
 
 export type RootStackParamList = {
   SignUp: undefined;
   Login: undefined;
   ForgotPassword: undefined;
+  Home: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -25,12 +30,117 @@ const LoginScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig>({
+    visible: false,
+    title: '',
+    message: '',
+    buttons: [],
+    loading: false,
+  });
 
-  const handleLogin = () => {
-    console.log({email, password});
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: 'Please fill in all fields',
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const userCredential = await auth().signInWithEmailAndPassword(
+        email,
+        password,
+      );
+
+      if (!userCredential.user.emailVerified) {
+        setAlertConfig({
+          visible: true,
+          title: 'Email Not Verified',
+          message: 'Please verify your email before logging in.',
+          buttons: [
+            {
+              text: 'Resend Email',
+              type: 'action',
+              onPress: async () => {
+                setAlertConfig(prev => ({...prev, loading: true}));
+                await userCredential.user.sendEmailVerification();
+                setAlertConfig({
+                  visible: true,
+                  title: 'Success',
+                  message:
+                    'Verification email has been resent to your email address.',
+                  buttons: [
+                    {
+                      text: 'OK',
+                      type: 'default',
+                      onPress: () =>
+                        setAlertConfig(prev => ({...prev, visible: false})),
+                    },
+                  ],
+                });
+              },
+            },
+            {
+              text: 'Cancel',
+              type: 'cancel',
+              onPress: () =>
+                setAlertConfig(prev => ({...prev, visible: false})),
+            },
+          ],
+        });
+        await auth().signOut();
+        return;
+      }
+
+      navigation.navigate('Home');
+    } catch (error: any) {
+      console.log('Firebase error:', error);
+      let errorMessage = 'An error occurred during login';
+
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Invalid password';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: errorMessage,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSocialLogin = (provider: 'google' | 'facebook') => {
+    // Implement social login logic here
     console.log('Social login with:', provider);
   };
 
@@ -59,10 +169,11 @@ const LoginScreen: React.FC = () => {
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="muffin.sweet@gmail.com"
+              placeholder="Enter your email"
               placeholderTextColor="#666"
               keyboardType="email-address"
               autoCapitalize="none"
+              returnKeyType="next"
             />
             {email.length > 0 && <Text style={styles.checkmark}>✓</Text>}
           </View>
@@ -77,6 +188,7 @@ const LoginScreen: React.FC = () => {
             secureTextEntry
             placeholder="••••••••"
             placeholderTextColor="#666"
+            returnKeyType="done"
           />
           <TouchableOpacity
             onPress={() => navigation.navigate('ForgotPassword')}
@@ -95,8 +207,15 @@ const LoginScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>LOGIN</Text>
+        <TouchableOpacity
+          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+          onPress={handleLogin}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.loginButtonText}>LOGIN</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.socialContainer}>
@@ -115,6 +234,8 @@ const LoginScreen: React.FC = () => {
           </View>
         </View>
       </View>
+
+      <CustomAlert {...alertConfig} />
     </KeyboardAvoidingView>
   );
 };
@@ -126,7 +247,6 @@ const styles = StyleSheet.create({
   },
   backContainer: {
     paddingTop: StatusBar.currentHeight || 0,
-
     paddingHorizontal: '2%',
   },
   formContainer: {
@@ -161,6 +281,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: '4%',
     backgroundColor: '#F8F8F8',
+    color: '#000',
   },
   checkmark: {
     position: 'absolute',
@@ -193,6 +314,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: '5%',
     marginBottom: '8%',
+  },
+  loginButtonDisabled: {
+    opacity: 0.7,
   },
   loginButtonText: {
     color: '#fff',

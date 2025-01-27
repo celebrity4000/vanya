@@ -33,10 +33,8 @@ const SocialMediaButtons: React.FC<SocialMediaButtonsProps> = ({
 
 const styles = StyleSheet.create({
   socialContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
+    // Remove absolute positioning
+    marginTop: 20,
     alignItems: 'center',
   },
   socialText: {
