@@ -15,7 +15,20 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {IconButton} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import CustomAlert, {AlertConfig} from '../components/CustomAlert';
+import SocialMediaButtons from '../components/SocialMediaButtons';
+import {facebookLogin} from '../api/facebookAuth';
+
+// Initialize Google Sign In
+GoogleSignin.configure({
+  webClientId:
+    '833255343418-l7muk36a143iqi1vv2aoctn32md45v05.apps.googleusercontent.com',
+  offlineAccess: false,
+});
 
 export type RootStackParamList = {
   SignUp: undefined;
@@ -103,9 +116,8 @@ const LoginScreen: React.FC = () => {
         return;
       }
 
-      navigation.navigate('Home');
+      navigation.replace('Home');
     } catch (error: any) {
-      console.log('Firebase error:', error);
       let errorMessage = 'An error occurred during login';
 
       switch (error.code) {
@@ -139,16 +151,99 @@ const LoginScreen: React.FC = () => {
     }
   };
 
-  const handleSocialLogin = (provider: 'google' | 'facebook') => {
-    // Implement social login logic here
-    console.log('Social login with:', provider);
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices();
+
+      // Sign in and get id token
+      await GoogleSignin.signIn();
+
+      // Get tokens
+      const {accessToken} = await GoogleSignin.getTokens();
+
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(
+        null,
+        accessToken,
+      );
+
+      // Sign-in the user with the credential
+      await auth().signInWithCredential(googleCredential);
+
+      navigation.replace('Home');
+    } catch (error: any) {
+      console.log('Google Sign-In Error:', error);
+      let errorMessage = 'An error occurred during Google sign in';
+
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        return;
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        errorMessage = 'Sign in is already in progress';
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        errorMessage = 'Play services not available or outdated';
+      } else {
+        errorMessage = error.message;
+      }
+
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: errorMessage,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+    try {
+      setLoading(true);
+
+      if (provider === 'google') {
+        await handleGoogleLogin();
+      } else if (provider === 'facebook') {
+        const userCredential = await facebookLogin();
+        navigation.replace('Home');
+      }
+    } catch (error: any) {
+      console.log('Social Login Error:', error);
+      let errorMessage = 'An error occurred during social login';
+
+      if (error.message === 'User cancelled the login process') {
+        return;
+      }
+
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: errorMessage,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
-      {/* Back Arrow Container */}
       <View style={styles.backContainer}>
         <IconButton
           icon="arrow-left"
@@ -158,7 +253,6 @@ const LoginScreen: React.FC = () => {
         />
       </View>
 
-      {/* Main Content Container */}
       <View style={styles.formContainer}>
         <Text style={styles.title}>Login</Text>
 
@@ -218,21 +312,10 @@ const LoginScreen: React.FC = () => {
           )}
         </TouchableOpacity>
 
-        <View style={styles.socialContainer}>
-          <Text style={styles.socialText}>Or login with social account</Text>
-          <View style={styles.socialButtons}>
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={() => handleSocialLogin('google')}>
-              <IconButton icon="google" size={24} iconColor="#DB4437" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={() => handleSocialLogin('facebook')}>
-              <IconButton icon="facebook" size={24} iconColor="#4267B2" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <SocialMediaButtons
+          onSocialPress={handleSocialLogin}
+          containerText="Or login with social account"
+        />
       </View>
 
       <CustomAlert {...alertConfig} />
@@ -322,37 +405,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  socialContainer: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    marginTop: 'auto',
-  },
-  socialText: {
-    color: '#000',
-    marginBottom: '4%',
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  socialButton: {
-    width: '15%',
-    aspectRatio: 1,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: '4%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
 });
 

@@ -1,5 +1,5 @@
 // ProfileScreen.tsx
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {images} from '../assets/images/images';
@@ -16,11 +17,89 @@ import CustomStatusBar from '../components/CustomStatusBar';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
+import auth from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {LoginManager} from 'react-native-fbsdk-next';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const [userName, setUserName] = useState<string>('');
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Get current user data
+    const getCurrentUser = () => {
+      const user = auth().currentUser;
+      if (user) {
+        // Get displayName (set during signup), email, and photo URL
+        setUserName(user.displayName || 'User');
+        setUserEmail(user.email || '');
+        setUserPhoto(user.photoURL);
+      } else {
+        // If no user is signed in, redirect to login
+        navigation.replace('SignUp');
+      }
+      setLoading(false);
+    };
+
+    // Set up auth state listener
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        setUserName(user.displayName || 'User');
+        setUserEmail(user.email || '');
+        setUserPhoto(user.photoURL);
+      } else {
+        navigation.replace('SignUp');
+      }
+      setLoading(false);
+    });
+
+    getCurrentUser();
+
+    // Cleanup subscription
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleSignOut = async () => {
+    try {
+      setLoading(true);
+
+      try {
+        // Sign out from Google (if applicable)
+        await GoogleSignin.signOut();
+      } catch (error) {
+        console.log('Google sign out error:', error);
+      }
+
+      try {
+        // Sign out from Facebook
+        LoginManager.logOut();
+      } catch (error) {
+        console.log('Facebook sign out error:', error);
+      }
+
+      // Sign out from Firebase
+      await auth().signOut();
+      navigation.replace('SignUp');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#0A8D48" />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <CustomStatusBar backgroundColor="transparent" barStyle="dark-content" />
@@ -28,10 +107,13 @@ const ProfileScreen = () => {
         <Text style={styles.title}>My profile</Text>
 
         <View style={styles.profileSection}>
-          <Image source={images.profile} style={styles.profileImage} />
+          <Image
+            source={userPhoto ? {uri: userPhoto} : images.profile}
+            style={styles.profileImage}
+          />
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>Matilda Brown</Text>
-            <Text style={styles.email}>matildabrown@mail.com</Text>
+            <Text style={styles.name}>{userName}</Text>
+            <Text style={styles.email}>{userEmail}</Text>
           </View>
         </View>
 
@@ -54,6 +136,15 @@ const ProfileScreen = () => {
           </View>
           <IconButton icon="chevron-right" size={24} iconColor="#9B9B9B" />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.menuItem, styles.signOutItem]}
+          onPress={handleSignOut}>
+          <View style={styles.menuContent}>
+            <Text style={[styles.menuTitle, styles.signOutText]}>Sign Out</Text>
+          </View>
+          <IconButton icon="logout" size={24} iconColor="#FF3B30" />
+        </TouchableOpacity>
       </View>
       <BottomTabBar />
     </SafeAreaView>
@@ -72,6 +163,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 34,
@@ -122,6 +217,14 @@ const styles = StyleSheet.create({
   menuSubtitle: {
     fontSize: 11,
     color: '#000',
+  },
+  signOutItem: {
+    marginTop: 'auto',
+    borderBottomWidth: 0,
+  },
+  signOutText: {
+    color: '#FF3B30',
+    fontWeight: '600',
   },
 });
 

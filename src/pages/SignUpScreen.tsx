@@ -15,8 +15,20 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {IconButton} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import CustomAlert, {AlertConfig} from '../components/CustomAlert';
 import SocialMediaButtons from '../components/SocialMediaButtons';
+import {facebookLogin} from '../api/facebookAuth';
+
+// Initialize Google Sign In with proper configuration
+GoogleSignin.configure({
+  webClientId:
+    '833255343418-l7muk36a143iqi1vv2aoctn32md45v05.apps.googleusercontent.com',
+  offlineAccess: true,
+});
 
 export type RootStackParamList = {
   SignUp: undefined;
@@ -31,6 +43,17 @@ interface FormErrors {
   name: string;
   email: string;
   password: string;
+}
+
+interface GoogleUser {
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    photo: string | null;
+    familyName: string | null;
+    givenName: string | null;
+  };
 }
 
 const SignUpScreen: React.FC = () => {
@@ -155,9 +178,114 @@ const SignUpScreen: React.FC = () => {
     }
   };
 
-  const handleSocialSignUp = (provider: 'google' | 'facebook') => {
-    // Implement social sign up logic here
-    console.log('Social sign up with:', provider);
+  const handleGoogleSignUp = async () => {
+    try {
+      setLoading(true);
+
+      // 1. Check Play Services
+      await GoogleSignin.hasPlayServices();
+
+      // 2. Sign in with Google (this opens Google sign-in popup)
+      const signInResult = await GoogleSignin.signIn();
+
+      // 3. Get ID token
+      const {idToken} = await GoogleSignin.getTokens();
+
+      // 4. Create Firebase credential
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // 5. Sign in to Firebase
+      const userCredential = await auth().signInWithCredential(
+        googleCredential,
+      );
+
+      // 6. Update profile if new user
+      if (
+        userCredential.additionalUserInfo?.isNewUser &&
+        userCredential.user.email
+      ) {
+        const username = userCredential.user.email.split('@')[0];
+        await userCredential.user.updateProfile({
+          displayName: username || 'User',
+        });
+      }
+
+      navigation.replace('Home');
+    } catch (error: any) {
+      console.log('Google Sign-Up Error:', error);
+      let errorMessage = 'An error occurred during Google sign up';
+
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        return;
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        errorMessage = 'Sign in is already in progress';
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        errorMessage = 'Play services not available or outdated';
+      } else {
+        errorMessage = error.message;
+      }
+
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: errorMessage,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSocialSignUp = async (provider: 'google' | 'facebook') => {
+    try {
+      setLoading(true);
+
+      if (provider === 'google') {
+        await handleGoogleSignUp();
+      } else if (provider === 'facebook') {
+        const userCredential = await facebookLogin();
+
+        // If this is a new user, update their profile
+        if (userCredential.additionalUserInfo?.isNewUser) {
+          await userCredential.user.updateProfile({
+            displayName:
+              userCredential.user.displayName ||
+              userCredential.user.email?.split('@')[0] ||
+              'User',
+            photoURL: userCredential.user.photoURL || undefined,
+          });
+        }
+
+        navigation.replace('Home');
+      }
+    } catch (error: any) {
+      console.log('Social Sign-Up Error:', error);
+      let errorMessage = 'An error occurred during social sign up';
+
+      if (error.message === 'User cancelled the login process') {
+        return;
+      }
+
+      setAlertConfig({
+        visible: true,
+        title: 'Error',
+        message: errorMessage,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'default',
+            onPress: () => setAlertConfig(prev => ({...prev, visible: false})),
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
