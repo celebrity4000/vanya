@@ -244,6 +244,12 @@ const LoginScreen: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+      <StatusBar translucent backgroundColor="transparent" />
       <View style={styles.backContainer}>
         <IconButton
           icon="arrow-left"
@@ -327,9 +333,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   backContainer: {
-    paddingTop: StatusBar.currentHeight || 0,
+    paddingTop: '2%',
     paddingHorizontal: '2%',
   },
   formContainer: {

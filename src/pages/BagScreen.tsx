@@ -34,6 +34,7 @@ const BagScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar translucent backgroundColor="#fff" barStyle="dark-content" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Shopping Bag</Text>
       </View>
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   header: {
     padding: 16,
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    paddingTop: StatusBar.currentHeight || 0,
     fontWeight: 'bold',
     color: '#000',
   },

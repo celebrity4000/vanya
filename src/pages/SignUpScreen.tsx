@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -43,17 +44,6 @@ interface FormErrors {
   name: string;
   email: string;
   password: string;
-}
-
-interface GoogleUser {
-  user: {
-    id: string;
-    name: string | null;
-    email: string;
-    photo: string | null;
-    familyName: string | null;
-    givenName: string | null;
-  };
 }
 
 const SignUpScreen: React.FC = () => {
@@ -292,6 +282,12 @@ const SignUpScreen: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+      <StatusBar translucent backgroundColor="transparent" />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -391,6 +387,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   scrollContent: {
     flexGrow: 1,
@@ -398,7 +395,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '90%',
     alignSelf: 'center',
-    paddingTop: '20%',
+    paddingTop: '14%',
     paddingBottom: 40,
   },
   title: {

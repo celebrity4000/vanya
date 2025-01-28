@@ -34,12 +34,14 @@ const ProductDetail: React.FC = () => {
   );
   const favorites = useSelector((state: RootState) => state.favorites.items);
   const isFavorite = favorites.some(fav => fav.id === productId);
+
   const calculateTotalPrice = () => {
     if (!product) return '₹0';
     const basePrice = parseInt(product.price.replace('₹', ''));
     const total = basePrice * parseInt(quantity);
     return `₹${total}`;
   };
+
   const formatPrice = (price: string) => {
     return parseInt(price.replace('₹', ''));
   };
@@ -62,7 +64,7 @@ const ProductDetail: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomStatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar translucent backgroundColor={'#fff'} barStyle="dark-content" />
       <View style={styles.header}>
         <IconButton
           icon="arrow-left"
@@ -105,8 +107,8 @@ const ProductDetail: React.FC = () => {
             <TouchableOpacity
               style={styles.quantitySelector}
               onPress={() => setShowQuantity(!showQuantity)}>
-              <Text>{quantity}</Text>
-              <IconButton icon="chevron-down" size={20} />
+              <Text style={styles.quantityText}>{quantity}</Text>
+              <IconButton icon="chevron-down" size={20} iconColor="#000" />
             </TouchableOpacity>
 
             {showQuantity && (
@@ -119,7 +121,7 @@ const ProductDetail: React.FC = () => {
                       setQuantity(num.toString());
                       setShowQuantity(false);
                     }}>
-                    <Text>{num}</Text>
+                    <Text style={styles.quantityText}>{num}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -168,13 +170,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 8,
-    paddingTop: StatusBar.currentHeight || 0,
     borderBottomWidth: 1,
     borderBottomColor: '#F2F2F2',
   },
@@ -224,20 +226,29 @@ const styles = StyleSheet.create({
   quantityContainer: {
     marginBottom: 24,
     position: 'relative',
+    width: '100%',
   },
   label: {
     fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 12,
     color: '#222222',
+    fontWeight: '500',
   },
   quantitySelector: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#DADADA',
-    borderRadius: 4,
-    padding: 8,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     justifyContent: 'space-between',
+    backgroundColor: '#F8F8F8',
+  },
+  quantityText: {
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '500',
   },
   quantityDropdown: {
     position: 'absolute',
@@ -247,13 +258,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#DADADA',
-    borderRadius: 4,
+    borderRadius: 8,
     zIndex: 1,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   quantityOption: {
-    padding: 12,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F2F2F2',
+    alignItems: 'center',
   },
   section: {
     marginBottom: 24,
@@ -262,6 +282,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 8,
+    color: '#000',
   },
   description: {
     color: '#666666',

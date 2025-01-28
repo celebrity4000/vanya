@@ -171,8 +171,12 @@ const OrdersScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CustomStatusBar backgroundColor="transparent" barStyle="dark-content" />
-      <View style={[styles.container, styles.containerMargin]}>
+      <StatusBar
+        translucent
+        backgroundColor="#f8f8f8"
+        barStyle="dark-content"
+      />
+      <View style={[styles.container]}>
         <View style={styles.header}>
           <IconButton
             icon="arrow-left"
@@ -214,6 +218,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f8f8',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   container: {
     flex: 1,
@@ -245,7 +250,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   tab: {
-    marginRight: 45,
+    marginRight: 25,
     paddingVertical: 10,
   },
   activeTab: {

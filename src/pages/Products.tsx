@@ -9,6 +9,7 @@ import {
   FlatList,
   Dimensions,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {useSelector, useDispatch} from 'react-redux';
@@ -643,6 +644,11 @@ const Product: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar
+        translucent
+        backgroundColor="#0A8D48"
+        barStyle="dark-content"
+      />
       <View style={styles.container}>
         <ScrollView
           style={styles.container}
@@ -675,6 +681,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f8f8',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   container: {
     flex: 1,

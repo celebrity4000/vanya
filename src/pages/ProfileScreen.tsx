@@ -18,8 +18,6 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import auth from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {LoginManager} from 'react-native-fbsdk-next';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,7 +25,6 @@ const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [userName, setUserName] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
-  const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,10 +32,9 @@ const ProfileScreen = () => {
     const getCurrentUser = () => {
       const user = auth().currentUser;
       if (user) {
-        // Get displayName (set during signup), email, and photo URL
+        // Get displayName (set during signup) and email
         setUserName(user.displayName || 'User');
         setUserEmail(user.email || '');
-        setUserPhoto(user.photoURL);
       } else {
         // If no user is signed in, redirect to login
         navigation.replace('SignUp');
@@ -51,7 +47,6 @@ const ProfileScreen = () => {
       if (user) {
         setUserName(user.displayName || 'User');
         setUserEmail(user.email || '');
-        setUserPhoto(user.photoURL);
       } else {
         navigation.replace('SignUp');
       }
@@ -66,29 +61,10 @@ const ProfileScreen = () => {
 
   const handleSignOut = async () => {
     try {
-      setLoading(true);
-
-      try {
-        // Sign out from Google (if applicable)
-        await GoogleSignin.signOut();
-      } catch (error) {
-        console.log('Google sign out error:', error);
-      }
-
-      try {
-        // Sign out from Facebook
-        LoginManager.logOut();
-      } catch (error) {
-        console.log('Facebook sign out error:', error);
-      }
-
-      // Sign out from Firebase
       await auth().signOut();
       navigation.replace('SignUp');
     } catch (error) {
       console.error('Error signing out:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -102,15 +78,12 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CustomStatusBar backgroundColor="transparent" barStyle="dark-content" />
-      <View style={[styles.container, styles.containerMargin]}>
+      <StatusBar translucent backgroundColor="#fff" barStyle="dark-content" />
+      <View style={[styles.container]}>
         <Text style={styles.title}>My profile</Text>
 
         <View style={styles.profileSection}>
-          <Image
-            source={userPhoto ? {uri: userPhoto} : images.profile}
-            style={styles.profileImage}
-          />
+          <Image source={images.profile} style={styles.profileImage} />
           <View style={styles.profileInfo}>
             <Text style={styles.name}>{userName}</Text>
             <Text style={styles.email}>{userEmail}</Text>

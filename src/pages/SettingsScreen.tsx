@@ -22,8 +22,13 @@ const SettingsScreen = () => {
   });
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CustomStatusBar backgroundColor="transparent" barStyle="dark-content" />
-      <View style={[styles.container, styles.containerMargin]}>
+      <StatusBar
+        translucent
+        backgroundColor="#f8f8f8"
+        barStyle="dark-content"
+      />
+
+      <View style={[styles.container]}>
         <View style={styles.header}>
           <IconButton
             icon="arrow-left"
@@ -122,13 +127,12 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f8f8',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   container: {
     flex: 1,
   },
-  containerMargin: {
-    marginTop: StatusBar.currentHeight || 0,
-  },
+
   header: {
     paddingHorizontal: 10,
     marginBottom: 20,

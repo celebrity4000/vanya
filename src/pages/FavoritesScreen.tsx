@@ -9,6 +9,7 @@ import {
   FlatList,
   Dimensions,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import {IconButton} from 'react-native-paper';
 import {useSelector, useDispatch} from 'react-redux';
@@ -109,6 +110,11 @@ const FavoritesScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar
+        translucent
+        backgroundColor="#F8F8F8"
+        barStyle="dark-content"
+      />
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Favorites</Text>
@@ -178,6 +184,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8F8F8',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   container: {
     flex: 1,

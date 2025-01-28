@@ -1,0 +1,1 @@
+export const MOBILE_NUMBER = '9836365640';

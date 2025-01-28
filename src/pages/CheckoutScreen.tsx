@@ -14,6 +14,7 @@ import {IconButton} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
+import {MOBILE_NUMBER} from '../constants/personal';
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ const CheckoutScreen = () => {
       )}\n\nSubtotal: ₹${subtotal}\nDelivery: ₹${deliveryFee}\nTotal: ₹${total}`;
 
     Linking.openURL(
-      `whatsapp://send?phone=YOUR_PHONE_NUMBER&text=${encodeURIComponent(
+      `whatsapp://send?phone=${MOBILE_NUMBER}&text=${encodeURIComponent(
         message,
       )}`,
     );
@@ -51,6 +52,7 @@ const CheckoutScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar translucent backgroundColor="#fff" barStyle="dark-content" />
       <View style={styles.header}>
         <IconButton
           icon="arrow-left"
@@ -117,9 +119,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   header: {
-    paddingTop: StatusBar.currentHeight || 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
