@@ -28,6 +28,7 @@ interface ProductItem {
   rating: number;
   reviews: number;
   isNew: boolean;
+  description?: string;
 }
 
 export type RootStackParamList = {
@@ -40,6 +41,7 @@ export type RootStackParamList = {
   Favorites: undefined;
   Bag: undefined;
   Profile: undefined;
+  ProductDetail: {productId: string};
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -54,7 +56,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'sale_1',
       name: 'Bhikhaneri Keshri Pheni',
-      price: '30$',
+      price: '30',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -63,7 +65,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'sale_2',
       name: 'Pure Patali Gud',
-      price: '30$',
+      price: '30',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -72,7 +74,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'sale_3',
       name: 'Desi Ghee',
-      price: '40$',
+      price: '40',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -84,7 +86,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'new_1',
       name: 'Kodo Millets',
-      price: '30$',
+      price: '30',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -93,7 +95,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'new_2',
       name: 'Foxtail Millets',
-      price: '30$',
+      price: '30',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -102,7 +104,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'new_3',
       name: 'Little Millet',
-      price: '40$',
+      price: '40',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -111,7 +113,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'new_4',
       name: 'Barnyard Millet',
-      price: '40$',
+      price: '40',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -120,7 +122,7 @@ const HomeScreen: React.FC = () => {
     {
       id: 'new_5',
       name: 'Brownstop Millet',
-      price: '40$',
+      price: '40',
       image: images.aata,
       rating: 0,
       reviews: 0,
@@ -148,37 +150,45 @@ const HomeScreen: React.FC = () => {
     const isFavorite = favorites.some(fav => fav.id === item.id);
 
     return (
-      <View style={styles.cardWrapper}>
-        <View style={styles.productCard}>
-          <Image
-            source={item.image}
-            style={styles.productImage}
-            resizeMode="cover"
-          />
-          {item.isNew && (
-            <View style={styles.newBadge}>
-              <Text style={styles.newText}>NEW</Text>
-            </View>
-          )}
-          <TouchableOpacity
-            style={styles.favoriteButton}
-            onPress={() => dispatch(toggleFavorite(item))}>
-            <IconButton
-              icon="heart"
-              size={20}
-              iconColor={isFavorite ? '#DB3022' : '#9B9B9B'}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ProductDetail', {productId: item.id})
+        }>
+        <View style={styles.cardWrapper}>
+          <View style={styles.productCard}>
+            <Image
+              source={item.image}
+              style={styles.productImage}
+              resizeMode="cover"
             />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.productInfo}>
-          <View style={styles.ratingRow}>
-            {renderRatingStars(item.rating)}
-            <Text style={styles.reviewCount}>({item.reviews})</Text>
+            {item.isNew && (
+              <View style={styles.newBadge}>
+                <Text style={styles.newText}>NEW</Text>
+              </View>
+            )}
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={e => {
+                e.stopPropagation(); // Prevent parent onPress from firing
+                dispatch(toggleFavorite(item));
+              }}>
+              <IconButton
+                icon="heart"
+                size={20}
+                iconColor={isFavorite ? '#DB3022' : '#9B9B9B'}
+              />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.productPrice}>{item.price}</Text>
+          <View style={styles.productInfo}>
+            <View style={styles.ratingRow}>
+              {renderRatingStars(item.rating)}
+              <Text style={styles.reviewCount}>({item.reviews})</Text>
+            </View>
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.productPrice}>₹{item.price}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

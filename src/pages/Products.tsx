@@ -55,18 +55,16 @@ const Product: React.FC = () => {
     {
       id: 'aata_1',
       name: 'Khapali Gehun',
-      price: '80₹',
+      price: '80',
       image: images.aata,
       rating: 4,
       reviews: 15,
       isNew: true,
-      description:
-        'Premium quality Khapali wheat flour, stone ground and rich in nutrients. Perfect for making rotis, chapatis, and other traditional dishes.',
     },
     {
       id: 'aata_2',
       name: 'Sharbati Gehun',
-      price: '75₹',
+      price: '75',
       image: images.aata,
       rating: 4,
       reviews: 12,
@@ -75,7 +73,7 @@ const Product: React.FC = () => {
     {
       id: 'aata_3',
       name: 'Bajri Aata',
-      price: '70₹',
+      price: '70',
       image: images.aata,
       rating: 5,
       reviews: 18,
@@ -84,7 +82,7 @@ const Product: React.FC = () => {
     {
       id: 'aata_4',
       name: 'Raagi',
-      price: '70₹',
+      price: '70',
       image: images.aata,
       rating: 5,
       reviews: 18,
@@ -93,7 +91,7 @@ const Product: React.FC = () => {
     {
       id: 'aata_5',
       name: 'Barley',
-      price: '70₹',
+      price: '70',
       image: images.aata,
       rating: 5,
       reviews: 18,
@@ -102,7 +100,7 @@ const Product: React.FC = () => {
     {
       id: 'aata_6',
       name: 'Sorghum',
-      price: '70₹',
+      price: '70',
       image: images.aata,
       rating: 5,
       reviews: 18,
@@ -111,7 +109,7 @@ const Product: React.FC = () => {
     {
       id: 'aata_7',
       name: 'Chaana Aata',
-      price: '70₹',
+      price: '70',
       image: images.aata,
       rating: 5,
       reviews: 18,
@@ -120,7 +118,7 @@ const Product: React.FC = () => {
     {
       id: 'aata_8',
       name: 'Gluten Free Aata',
-      price: '70₹',
+      price: '70',
       image: images.aata,
       rating: 5,
       reviews: 18,
@@ -132,7 +130,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_1',
       name: 'Arhar Dal',
-      price: '120₹',
+      price: '120',
       image: images.aata,
       rating: 4,
       reviews: 20,
@@ -141,7 +139,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_2',
       name: 'Moong Dal',
-      price: '140₹',
+      price: '140',
       image: images.aata,
       rating: 5,
       reviews: 25,
@@ -150,7 +148,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_3',
       name: 'Chana Dal',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -159,7 +157,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_4',
       name: 'Laal Chana Dal',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -168,7 +166,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_5',
       name: 'Mogar',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -177,7 +175,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_6',
       name: 'Kabuli Chana',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -186,7 +184,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_7',
       name: 'Ghughuni Matar',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -195,7 +193,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_8',
       name: 'Lobia',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -204,7 +202,7 @@ const Product: React.FC = () => {
     {
       id: 'daal_9',
       name: 'Rajma',
-      price: '90₹',
+      price: '90',
       image: images.aata,
       rating: 4,
       reviews: 16,
@@ -216,7 +214,7 @@ const Product: React.FC = () => {
     {
       id: 'ghee_1',
       name: 'A2 Bilona Ghee',
-      price: '999₹',
+      price: '999',
       image: images.aata,
       rating: 5,
       reviews: 30,
@@ -225,7 +223,7 @@ const Product: React.FC = () => {
     {
       id: 'ghee_2',
       name: 'Organic Ghee',
-      price: '899₹',
+      price: '899',
       image: images.aata,
       rating: 4,
       reviews: 22,
@@ -235,7 +233,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_1',
       name: 'Mustard Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -244,7 +242,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_2',
       name: 'Sunflower Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -253,7 +251,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_3',
       name: 'Groundnut Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -262,7 +260,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_4',
       name: 'Sesame Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -271,7 +269,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_5',
       name: 'Coconut Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -280,7 +278,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_6',
       name: 'Olive Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -289,7 +287,7 @@ const Product: React.FC = () => {
     {
       id: 'oil_7',
       name: 'Almond Oil',
-      price: '180₹',
+      price: '180',
       image: images.aata,
       rating: 4,
       reviews: 18,
@@ -301,7 +299,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_1',
       name: 'Haldi Powder',
-      price: '80₹',
+      price: '80',
       image: images.aata,
       rating: 4,
       reviews: 25,
@@ -310,7 +308,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_2',
       name: 'Jeera Powder',
-      price: '120₹',
+      price: '120',
       image: images.aata,
       rating: 5,
       reviews: 20,
@@ -319,7 +317,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_3',
       name: 'Gota Dhania',
-      price: '60₹',
+      price: '60',
       image: images.aata,
       rating: 4,
       reviews: 15,
@@ -328,7 +326,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_4',
       name: 'Dhania Powder',
-      price: '60₹',
+      price: '60',
       image: images.aata,
       rating: 4,
       reviews: 15,
@@ -337,7 +335,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_5',
       name: 'Mirchi Powder',
-      price: '60₹',
+      price: '60',
       image: images.aata,
       rating: 4,
       reviews: 15,
@@ -346,7 +344,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_6',
       name: 'Aamchur',
-      price: '60₹',
+      price: '60',
       image: images.aata,
       rating: 4,
       reviews: 15,
@@ -355,7 +353,7 @@ const Product: React.FC = () => {
     {
       id: 'spice_7',
       name: 'Sauf',
-      price: '60₹',
+      price: '60',
       image: images.aata,
       rating: 4,
       reviews: 15,
@@ -367,7 +365,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_1',
       name: 'Poha',
-      price: '50₹',
+      price: '50',
       image: images.aata,
       rating: 4,
       reviews: 22,
@@ -376,7 +374,7 @@ const Product: React.FC = () => {
     {
       id: 'essential_2',
       name: 'Brown Sugar',
-      price: '60₹',
+      price: '60',
       image: images.aata,
       rating: 4,
       reviews: 18,

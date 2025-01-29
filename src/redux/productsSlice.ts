@@ -7,6 +7,8 @@ import {
   gheeAndOilProducts,
   spicesProducts,
   essentialProducts,
+  saleProducts,
+  newProducts,
 } from '../constants/products';
 
 interface ProductsState {
@@ -15,6 +17,8 @@ interface ProductsState {
 
 const initialState: ProductsState = {
   items: [
+    ...saleProducts,
+    ...newProducts,
     ...aataProducts,
     ...daalProducts,
     ...gheeAndOilProducts,

@@ -84,7 +84,7 @@ const ProductDetail: React.FC = () => {
 
         <View style={styles.detailsContainer}>
           <View style={styles.brandRow}>
-            <Text style={styles.brandName}>Rasoi Essentials</Text>
+            <Text style={styles.brandName}>{product?.name}</Text>
             <TouchableOpacity
               onPress={() => product && dispatch(toggleFavorite(product))}>
               <IconButton

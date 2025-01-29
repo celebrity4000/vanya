@@ -23,6 +23,7 @@ import ProductDetail from './src/pages/ProductDetail';
 import OrdersScreen from './src/pages/OrdersScreen';
 import SettingsScreen from './src/pages/SettingsScreen';
 import CheckoutScreen from './src/pages/CheckoutScreen';
+import {StripeProvider} from '@stripe/stripe-react-native';
 
 export type RootStackParamList = {
   SignUp: undefined;
@@ -37,6 +38,9 @@ export type RootStackParamList = {
   Orders: undefined;
   Settings: undefined;
   Checkout: undefined;
+  OrderSuccess: {
+    orderId: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,6 +48,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): JSX.Element {
   return (
     <Provider store={store}>
+      {/* <StripeProvider
+        publishableKey="pk_test_51QmKFMGp4s8C4TuhimlauRw3HG6AvF1rush8FYiIV0l4qYGacPCZafs82QUfQ1MQeNkIgBQuIRZo5UBqigOw21gJ00yHxxSilc" // Get this from your Stripe Dashboard
+        merchantIdentifier="merchant.com.vanya" // Optional: For Apple Pay
+      > */}
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"
@@ -65,6 +73,7 @@ function App(): JSX.Element {
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
+      {/* </StripeProvider> */}
     </Provider>
   );
 }

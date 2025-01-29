@@ -2,6 +2,84 @@
 import {images} from '../assets/images/images';
 import {ProductItem} from '../types';
 
+export const saleProducts: ProductItem[] = [
+  {
+    id: 'sale_1',
+    name: 'Bhikhaneri Keshri Pheni',
+    price: '30',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+  {
+    id: 'sale_2',
+    name: 'Pure Patali Gud',
+    price: '30',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+  {
+    id: 'sale_3',
+    name: 'Desi Ghee',
+    price: '40',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+];
+
+export const newProducts: ProductItem[] = [
+  {
+    id: 'new_1',
+    name: 'Kodo Millets',
+    price: '30',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+  {
+    id: 'new_2',
+    name: 'Foxtail Millets',
+    price: '30',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+  {
+    id: 'new_3',
+    name: 'Little Millet',
+    price: '40',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+  {
+    id: 'new_4',
+    name: 'Barnyard Millet',
+    price: '40',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+  {
+    id: 'new_5',
+    name: 'Brownstop Millet',
+    price: '40',
+    image: images.aata,
+    rating: 0,
+    reviews: 0,
+    isNew: true,
+  },
+];
+
 export const aataProducts: ProductItem[] = [
   {
     id: 'aata_1',
